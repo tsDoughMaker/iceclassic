@@ -8,6 +8,8 @@ on:
 jobs:
   run-and-commit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout repository
@@ -31,8 +33,7 @@ jobs:
 
     - name: Commit and push changes
       run: |
-        git config --local user.email "test@github.com"
-        git config --local user.name "GitHub Action test"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
         git add predictions.svg predictions_all.svg README.md
-        git commit -m 'Update predictions*.svg'
-        git push
+        git diff --staged --quiet || (git commit -m 'Update predictions*.svg' && git push)
