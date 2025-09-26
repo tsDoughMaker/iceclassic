@@ -35,7 +35,4 @@ jobs:
         git config --local user.name "GitHub Action test"
         git add predictions.svg predictions_all.svg README.md
         git commit -m 'Update predictions*.svg'
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        git push
