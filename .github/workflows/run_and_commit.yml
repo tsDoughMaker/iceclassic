@@ -10,11 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      actions: read
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.FG_ICECLASSIC }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -33,10 +34,8 @@ jobs:
       run: touch README.md
 
     - name: Commit and push changes
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add predictions.svg predictions_all.svg README.md
-        git diff --staged --quiet || (git commit -m 'Update predictions*.svg' && git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git HEAD:main)
+        git diff --staged --quiet || (git commit -m 'Update predictions*.svg' && git push)
