@@ -2,6 +2,9 @@ name: Run Python Script and Commit SVG
 
 on:
   pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   run-and-commit:
@@ -13,6 +16,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        token: ${{ github.event_name == 'push' && secrets.FG_ICECLASSIC || github.token }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -31,8 +36,22 @@ jobs:
       run: touch README.md
 
     - name: Commit and push changes
+      if: ${{ github.event_name == 'push' }}
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add predictions.svg predictions_all.svg README.md
         git diff --staged --quiet || (git commit -m 'Update predictions*.svg' && git push)
+
+    - name: Check for changes (PR validation only)
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |
+        git add predictions.svg predictions_all.svg README.md
+        if ! git diff --staged --quiet; then
+          echo "⚠️ The Python script generated changes to the SVG files."
+          echo "A maintainer will need to run the script to update the files."
+          git diff --staged --name-only
+          exit 1
+        else
+          echo "✅ No changes needed to SVG files."
+        fi
