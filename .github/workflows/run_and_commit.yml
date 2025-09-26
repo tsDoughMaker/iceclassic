@@ -30,7 +30,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run Python script
-      run: python create_figure.py
+      run: python -W error create_figure.py
 
     - name: Touch README
       run: touch README.md
