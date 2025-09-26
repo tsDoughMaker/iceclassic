@@ -10,6 +10,8 @@ jobs:
   run-and-commit:
     name: Update plot
     runs-on: ubuntu-latest
+    # Skip if the last commit was made by GitHub Action
+    if: ${{ github.event.head_commit.author.name != 'GitHub Action' }}
     permissions:
       contents: write
 
