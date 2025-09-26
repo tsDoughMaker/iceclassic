@@ -48,10 +48,12 @@ jobs:
       run: |
         git add predictions.svg predictions_all.svg README.md
         if ! git diff --staged --quiet; then
-          echo "⚠️ The Python script generated changes to the SVG files."
-          echo "A maintainer will need to run the script to update the files."
+          echo "✅ The Python script successfully generated changes to the SVG files."
+          echo "This PR will update the plot files when merged."
           git diff --staged --name-only
-          exit 1
+          exit 0
         else
-          echo "✅ No changes needed to SVG files."
+          echo "❌ No changes detected to SVG files."
+          echo "Either the Python script failed or no updates are needed."
+          exit 1
         fi
