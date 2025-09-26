@@ -20,6 +20,8 @@ jobs:
       uses: actions/checkout@v4
       with:
         token: ${{ github.event_name == 'push' && secrets.FG_ICECLASSIC || github.token }}
+        ref: ${{ github.event.pull_request.head.sha }} #https://stackoverflow.com/questions/62334460/git-history-in-a-github-action
+        fetch-depth: 0
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -37,11 +39,11 @@ jobs:
         echo "Checking if predictions.txt changes are valid (only additions allowed)..."
         
         # Check if predictions.txt was modified
-        if git diff --name-only origin/main...HEAD | grep -q "data/predictions.txt"; then
+        if git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} | grep -q "data/predictions.txt"; then
           echo "predictions.txt was modified, validating changes..."
           
           # Check for deletions (lines starting with -)
-          DELETIONS=$(git diff origin/main...HEAD data/predictions.txt | grep "^-" | grep -v "^---" || true)
+          DELETIONS=$(git diff ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} data/predictions.txt | grep "^-" | grep -v "^---" || true)
           
           if [ ! -z "$DELETIONS" ]; then
             echo "❌ ERROR: Deletions found in predictions.txt!"
