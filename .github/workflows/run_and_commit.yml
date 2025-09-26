@@ -1,12 +1,11 @@
 name: Run Python Script and Commit SVG
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
 
 jobs:
   run-and-commit:
+    name: Update plot
     runs-on: ubuntu-latest
     permissions:
       contents: write
